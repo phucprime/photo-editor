@@ -1,97 +1,191 @@
-# iOS Photo Editor
+# iOSPhotoEditor
+
+[![Swift](https://img.shields.io/badge/Swift-5.0-orange.svg)](https://swift.org)
+[![iOS](https://img.shields.io/badge/iOS-9.0%2B-blue.svg)](https://developer.apple.com/ios/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE.md)
+[![CocoaPods](https://img.shields.io/badge/CocoaPods-compatible-red.svg)](https://cocoapods.org)
+[![React Native](https://img.shields.io/badge/React%20Native-integration-61DAFB.svg)](https://github.com/phucprime/react-native-image-editor)
+
+> A native iOS photo editing library — maintained as the core native dependency for [`@phucprime/react-native-image-editor`](https://github.com/phucprime/react-native-image-editor).
+
+This is a maintained fork of [M-Hamed/photo-editor](https://github.com/M-Hamed/photo-editor), kept up-to-date and integrated as the underlying iOS layer for the React Native image editing bridge.
+
+---
 
 ## Features
-- [x] Cropping 
-- [x] Adding images -Stickers-
-- [x] Adding Text with colors
-- [x] Drawing with colors
-- [x] Scaling and rotating objects 
-- [x] Deleting objects 
-- [x] Saving to photos and Sharing 
-- [x] Cool animations 
-- [x] Uses iOS Taptic Engine feedback 
+
+| Feature                                 | Status |
+| --------------------------------------- | ------ |
+| Crop & resize                           | ✅     |
+| Freehand drawing with color picker      | ✅     |
+| Text overlay with custom colors & fonts | ✅     |
+| Sticker / image overlay support         | ✅     |
+| Emoji overlays                          | ✅     |
+| Scale & rotate objects via gestures     | ✅     |
+| Delete objects                          | ✅     |
+| Save to photos & share sheet            | ✅     |
+| Smooth animations                       | ✅     |
+| iOS Taptic Engine haptic feedback       | ✅     |
+
+---
+
+## Integration Context
+
+This library is consumed as a native iOS pod inside the React Native package [`@phucprime/react-native-image-editor`](https://github.com/phucprime/react-native-image-editor). If you are using that package, **you do not need to install this pod manually** — it is pulled in transitively via the podspec dependency.
+
+For standalone iOS native usage, follow the installation steps below.
+
+---
+
+## Requirements
+
+- iOS 9.0+
+- Swift 5.0+
+- Xcode 13+
+- CocoaPods
+
+---
 
 ## Installation
 
 ### CocoaPods
 
-[CocoaPods](http://cocoapods.org) is a dependency manager for Cocoa projects. You can install it with the following command:
+Add the following to your `Podfile`, pointing directly to this fork:
 
-```bash
-$ gem install cocoapods
-```
-To integrate iOS Photo Editor into your Xcode project using CocoaPods, specify it in your `Podfile`:
 ```ruby
 source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '10.0'
 use_frameworks!
 
-target '<Your Target Name>' do
-    pod 'iOSPhotoEditor'
+target 'YourTargetName' do
+  pod 'iOSPhotoEditor', :git => 'https://github.com/phucprime/photo-editor.git', :tag => '1.0.0'
 end
 ```
 
-Then, run the following command:
+Then install:
 
 ```bash
-$ pod install
+pod install
 ```
+
+---
 
 ## Usage
 
-### Photo
-
-The `PhotoEditorViewController`.
+### Present the Editor
 
 ```swift
-let photoEditor = PhotoEditorViewController(nibName:"PhotoEditorViewController",bundle: Bundle(for: PhotoEditorViewController.self))
+import UIKit
 
-//PhotoEditorDelegate
+let photoEditor = PhotoEditorViewController(
+    nibName: "PhotoEditorViewController",
+    bundle: Bundle(for: PhotoEditorViewController.self)
+)
+
+// Delegate
 photoEditor.photoEditorDelegate = self
 
-//The image to be edited 
+// Required: image to edit
 photoEditor.image = image
 
-//Stickers that the user will choose from to add on the image         
-photoEditor.stickers.append(UIImage(named: "sticker" )!)
+// Optional: stickers the user can add
+photoEditor.stickers = [
+    UIImage(named: "sticker_1")!,
+    UIImage(named: "sticker_2")!
+]
 
-//Optional: To hide controls - array of enum control
-photoEditor.hiddenControls = [.crop, .draw, .share]
+// Optional: hide specific toolbar controls
+photoEditor.hiddenControls = [.share]
 
-//Optional: Colors for drawing and Text, If not set default values will be used
-photoEditor.colors = [.red,.blue,.green]
+// Optional: custom palette for drawing & text (defaults used if omitted)
+photoEditor.colors = [.red, .blue, .green, .yellow, .white, .black]
 
-//Present the View Controller
-present(photoEditor, animated: true, completion: nil)
+present(photoEditor, animated: true)
 ```
-The `PhotoEditorDelegate` methods.
+
+### Delegate
+
+Conform your view controller to `PhotoEditorDelegate`:
 
 ```swift
-func doneEditing(image: UIImage) {
-    // the edited image
-}
-    
-func canceledEditing() {
-    print("Canceled")
-}
+extension ViewController: PhotoEditorDelegate {
 
+    func doneEditing(image: UIImage) {
+        // Handle the edited UIImage — persist, upload, or pass back to the React Native bridge
+    }
+
+    func canceledEditing() {
+        dismiss(animated: true)
+    }
+}
 ```
 
-<img src="Assets/screenshot.PNG" width="350" height="600" />
+### Available Controls
 
-# Live Demo appetize.io
-[![Demo](Assets/appetize.png)](https://appetize.io/app/jtanmwtzbz1favhvhw5g24n7b0?device=iphone7plus&scale=50&orientation=portrait&osVersion=10.3)
+Pass these enum values to `hiddenControls` to remove them from the toolbar:
 
+| Value      | Description            |
+| ---------- | ---------------------- |
+| `.crop`    | Crop tool              |
+| `.draw`    | Freehand drawing       |
+| `.text`    | Text overlay           |
+| `.save`    | Save to camera roll    |
+| `.share`   | Share sheet            |
+| `.sticker` | Sticker / emoji picker |
 
-# Demo Video 
-[![Demo](https://img.youtube.com/vi/9VeIl9i30dI/0.jpg)](https://youtu.be/9VeIl9i30dI)
+---
 
-## Credits
+## Architecture Overview
 
-Written by [Mohamed Hamed](https://github.com/M-Hamed).
+```
+iOSPhotoEditor/
+├── PhotoEditorViewController           # Main editor entry point
+├── PhotoEditor+Controls                # Toolbar control bindings
+├── PhotoEditor+Crop                    # Crop logic
+├── PhotoEditor+Drawing                 # Canvas drawing layer
+├── PhotoEditor+Font                    # Font picker
+├── PhotoEditor+Gestures                # Pan / pinch / rotate recognizers
+├── PhotoEditor+Keyboard                # Keyboard avoidance
+├── PhotoEditor+StickersViewController  # Sticker sheet presentation
+├── PhotoEditor+UITextView              # Text overlay handling
+├── CropView / CropViewController       # Dedicated crop UI
+├── StickersViewController              # Sticker collection sheet
+├── GradientView                        # Background gradient
+└── UIImage+Crop / UIImage+Size         # Image utility extensions
+```
 
-Initially sponsored by [![Eventtus](http://assets.eventtus.com/logos/eventtus/standard.png)](http://eventtus.com)
+---
+
+## Preview
+
+<img src="Assets/screenshot.PNG" width="320" />
+
+---
+
+## Changelog
+
+### 1.0.0
+
+- Initial fork from [M-Hamed/photo-editor](https://github.com/M-Hamed/photo-editor)
+- Metadata updated for `@phucprime` ownership
+- Podspec source pointed to this fork
+- README rewritten for professional standalone + React Native integration use
+
+---
+
+## Related
+
+- [`@phucprime/react-native-image-editor`](https://github.com/phucprime/react-native-image-editor) — React Native bridge package that consumes this library as its native iOS layer
+
+---
+
+## Original Author
+
+Originally written by [Mohamed Hamed](https://github.com/M-Hamed).  
+Forked and maintained by [@phucprime](https://github.com/phucprime).
+
+---
 
 ## License
 
-Released under the [MIT License](http://www.opensource.org/licenses/MIT).
+Released under the [MIT License](LICENSE.md).

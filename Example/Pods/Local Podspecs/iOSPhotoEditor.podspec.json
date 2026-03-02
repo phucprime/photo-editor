@@ -1,18 +1,18 @@
 {
   "name": "iOSPhotoEditor",
   "version": "1.0.0",
-  "summary": "Photo Editor supports drawing, writing text and adding stickers and emojis",
-  "description": "Photo Editor supports drawing, writing text and adding stickers and emojis\nwith the ability to scale and rotate objects",
-  "homepage": "https://github.com/M-Hamed/photo-editor",
+  "summary": "Native iOS photo editing library — crop, draw, text, stickers, emoji overlays with gesture support.",
+  "description": "iOSPhotoEditor is a native iOS photo editing library that supports freehand drawing, text overlays with custom fonts and colors, sticker/emoji placement, cropping, and gesture-based scale/rotate. Maintained as the core native iOS dependency for @phucprime/react-native-image-editor.",
+  "homepage": "https://github.com/phucprime/photo-editor",
   "license": {
     "type": "MIT",
     "file": "LICENSE.md"
   },
   "authors": {
-    "Mohamed Hamed": "mohamed.hamed.ibrahem@gmail.com"
+    "phucprime": "https://github.com/phucprime"
   },
   "source": {
-    "git": "https://github.com/M-Hamed/photo-editor.git",
+    "git": "https://github.com/phucprime/photo-editor.git",
     "tag": "1.0.0"
   },
   "swift_versions": "5.0",

@@ -1,1 +1,9 @@
 theme: jekyll-theme-cayman
+title: iOSPhotoEditor
+description: >-
+  Native iOS photo editing library — core dependency for @phucprime/react-native-image-editor.
+  Supports crop, drawing, text overlays, stickers, emoji, and gesture-based manipulation.
+show_downloads: true
+github:
+  zip_url: https://github.com/phucprime/photo-editor/archive/refs/heads/master.zip
+  tar_url: https://github.com/phucprime/photo-editor/archive/refs/heads/master.tar.gz
